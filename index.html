@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Freebuff Index — the free coding agent, catalogued</title>
+<meta name="description" content="Every official doc, repo, guide and full build for Freebuff — the free coding agent. A single, browsable index." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #08090b;
+    --bg-2: #0d0f13;
+    --surface: #12151a;
+    --surface-2: #171b21;
+    --line: rgba(255, 255, 255, 0.08);
+    --line-strong: rgba(255, 255, 255, 0.14);
+    --text: #ecedef;
+    --muted: #969ba3;
+    --faint: #6b7078;
+    --lime: #c8f169;
+    --lime-dim: rgba(200, 241, 105, 0.14);
+    --teal: #5ce3c6;
+    --amber: #ffb454;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --maxw: 1180px;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* ambient background */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(680px 420px at 12% -6%, rgba(200, 241, 105, 0.12), transparent 62%),
+      radial-gradient(720px 460px at 92% 4%, rgba(92, 227, 198, 0.09), transparent 60%),
+      radial-gradient(900px 700px at 50% 108%, rgba(255, 180, 84, 0.05), transparent 62%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 120% 80% at 50% 0%, #000 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse 120% 80% at 50% 0%, #000 30%, transparent 80%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; }
+  .container { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ---------- nav ---------- */
+  header.nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    background: rgba(8, 9, 11, 0.72);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s var(--ease), background 0.3s var(--ease);
+  }
+  header.nav.scrolled { border-bottom-color: var(--line); background: rgba(8, 9, 11, 0.9); }
+  .nav-inner { display: flex; align-items: center; gap: 20px; height: 68px; }
+
+  .brand { display: flex; align-items: center; gap: 11px; font-weight: 700; letter-spacing: -0.02em; }
+  .brand .mark {
+    width: 30px; height: 30px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--lime), var(--teal));
+    display: grid; place-items: center; color: #08120a; font-weight: 800;
+    font-family: "JetBrains Mono", monospace; font-size: 15px;
+    box-shadow: 0 0 0 1px rgba(200, 241, 105, 0.35), 0 6px 20px -6px rgba(200, 241, 105, 0.5);
+  }
+  .brand span.sub { color: var(--faint); font-weight: 500; font-size: 13px; }
+
+  nav.links { display: flex; gap: 4px; margin-left: auto; }
+  nav.links a {
+    color: var(--muted); font-size: 14px; font-weight: 500;
+    padding: 8px 12px; border-radius: 8px;
+    transition: color 0.2s var(--ease), background 0.2s var(--ease);
+  }
+  nav.links a:hover { color: var(--text); background: rgba(255, 255, 255, 0.05); }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-weight: 600; font-size: 14px; border-radius: 10px;
+    padding: 10px 18px; border: 1px solid transparent; cursor: pointer;
+    transition: transform 0.2s var(--ease), background 0.2s var(--ease), border-color 0.2s var(--ease);
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--lime); color: #0a1206;
+    box-shadow: 0 10px 30px -12px rgba(200, 241, 105, 0.7);
+  }
+  .btn-primary:hover { transform: translateY(-2px); background: #d3f77f; }
+  .btn-ghost { background: rgba(255, 255, 255, 0.04); color: var(--text); border-color: var(--line-strong); }
+  .btn-ghost:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-2px); }
+
+  .nav-cta { margin-left: 8px; }
+  .menu-toggle {
+    display: none; margin-left: auto; background: none; border: 1px solid var(--line-strong);
+    color: var(--text); width: 40px; height: 40px; border-radius: 10px; cursor: pointer; font-size: 18px;
+  }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 84px 0 40px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-size: 12.5px; font-weight: 600; letter-spacing: 0.02em;
+    color: var(--lime); background: var(--lime-dim);
+    border: 1px solid rgba(200, 241, 105, 0.28);
+    padding: 6px 13px; border-radius: 999px; margin-bottom: 26px;
+  }
+  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 10px var(--lime); }
+
+  h1 {
+    font-size: clamp(2.4rem, 6vw, 4.35rem);
+    line-height: 1.04; letter-spacing: -0.035em; font-weight: 800;
+    max-width: 16ch;
+  }
+  h1 .accent {
+    background: linear-gradient(100deg, var(--lime) 0%, var(--teal) 70%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .lede {
+    margin-top: 22px; max-width: 60ch; color: var(--muted);
+    font-size: clamp(1rem, 2vw, 1.14rem);
+  }
+
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+
+  .terminal {
+    margin-top: 42px; max-width: 560px;
+    background: linear-gradient(180deg, var(--surface), var(--bg-2));
+    border: 1px solid var(--line); border-radius: var(--radius);
+    overflow: hidden; box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.9);
+  }
+  .terminal-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 11px 14px; border-bottom: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .terminal-bar i { width: 10px; height: 10px; border-radius: 50%; display: block; }
+  .terminal-bar i:nth-child(1) { background: #ff5f57; }
+  .terminal-bar i:nth-child(2) { background: #febc2e; }
+  .terminal-bar i:nth-child(3) { background: #28c840; }
+  .terminal-bar span { margin-left: 8px; font-family: "JetBrains Mono", monospace; font-size: 11.5px; color: var(--faint); }
+  .terminal-body {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 18px 18px; font-family: "JetBrains Mono", monospace; font-size: 14px;
+  }
+  .terminal-body code { color: var(--text); }
+  .terminal-body code .prompt { color: var(--teal); }
+  .copy-btn {
+    background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line-strong);
+    color: var(--muted); border-radius: 8px; padding: 6px 12px; font-size: 12px;
+    font-family: "Inter", sans-serif; font-weight: 600; cursor: pointer;
+    transition: all 0.2s var(--ease);
+  }
+  .copy-btn:hover { color: var(--text); background: rgba(255, 255, 255, 0.1); }
+  .copy-btn.done { color: #0a1206; background: var(--lime); border-color: var(--lime); }
+
+  /* stats */
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; margin-top: 56px; background: var(--line);
+    border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+  }
+  .stat { background: var(--bg-2); padding: 22px 20px; }
+  .stat .num { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.03em; font-family: "JetBrains Mono", monospace; }
+  .stat .num.lime { color: var(--lime); }
+  .stat .lbl { color: var(--faint); font-size: 12.5px; margin-top: 4px; }
+
+  /* ---------- sections ---------- */
+  section { padding: 78px 0; }
+  .sec-head { max-width: 660px; margin-bottom: 42px; }
+  .kicker {
+    font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal); margin-bottom: 14px;
+  }
+  h2 { font-size: clamp(1.6rem, 3.6vw, 2.35rem); letter-spacing: -0.03em; line-height: 1.12; font-weight: 700; }
+  .sec-head p { color: var(--muted); margin-top: 14px; font-size: 1.02rem; }
+
+  /* product cards */
+  .grid { display: grid; gap: 18px; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-auto { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+
+  .card {
+    position: relative; display: block;
+    background: linear-gradient(180deg, var(--surface), var(--bg-2));
+    border: 1px solid var(--line); border-radius: var(--radius); padding: 24px;
+    transition: transform 0.28s var(--ease), border-color 0.28s var(--ease), background 0.28s var(--ease);
+    overflow: hidden;
+  }
+  .card::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit;
+    background: radial-gradient(320px 160px at var(--mx, 50%) var(--my, 0%), rgba(200, 241, 105, 0.09), transparent 70%);
+    opacity: 0; transition: opacity 0.3s var(--ease); pointer-events: none;
+  }
+  .card:hover { transform: translateY(-4px); border-color: var(--line-strong); }
+  .card:hover::after { opacity: 1; }
+
+  .card .icon {
+    width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center;
+    background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line-strong);
+    font-size: 19px; margin-bottom: 16px;
+  }
+  .card h3 { font-size: 1.06rem; letter-spacing: -0.015em; margin-bottom: 8px; }
+  .card p { color: var(--muted); font-size: 0.93rem; }
+  .card .meta { margin-top: 16px; font-family: "JetBrains Mono", monospace; font-size: 11.5px; color: var(--faint); display: flex; align-items: center; gap: 8px; }
+  .card .go { margin-left: auto; color: var(--lime); transition: transform 0.25s var(--ease); }
+  .card:hover .go { transform: translateX(3px); }
+
+  /* list rows (docs / repos) */
+  .rows { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--bg-2); }
+  .row {
+    display: flex; align-items: center; gap: 18px;
+    padding: 17px 22px; border-bottom: 1px solid var(--line);
+    transition: background 0.2s var(--ease);
+  }
+  .row:last-child { border-bottom: none; }
+  .row:hover { background: rgba(255, 255, 255, 0.025); }
+  .row .name { font-weight: 600; font-size: 0.97rem; flex: 0 0 auto; }
+  .row .name .tag {
+    font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: var(--teal);
+    border: 1px solid rgba(92, 227, 198, 0.3); border-radius: 6px; padding: 2px 7px; margin-left: 10px;
+    vertical-align: middle;
+  }
+  .row .desc { color: var(--muted); font-size: 0.9rem; flex: 1 1 auto; }
+  .row .browse { color: var(--faint); font-size: 12px; font-family: "JetBrains Mono", monospace; flex: 0 0 auto; }
+  .row:hover .browse { color: var(--lime); }
+
+  /* pills */
+  .pills { display: flex; flex-wrap: wrap; gap: 10px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 15px; border-radius: 999px; font-size: 13.5px; font-weight: 500;
+    background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line);
+    color: var(--muted); transition: all 0.22s var(--ease);
+  }
+  .pill:hover { color: var(--text); border-color: var(--line-strong); background: rgba(255, 255, 255, 0.07); transform: translateY(-2px); }
+  .pill .d { width: 5px; height: 5px; border-radius: 50%; background: var(--amber); }
+
+  /* feature links (guides) */
+  .flist { display: grid; gap: 14px; }
+  .fitem {
+    display: flex; align-items: flex-start; gap: 16px; padding: 20px 22px;
+    border: 1px solid var(--line); border-radius: var(--radius-sm);
+    background: var(--bg-2); transition: all 0.24s var(--ease);
+  }
+  .fitem:hover { border-color: var(--line-strong); background: var(--surface); transform: translateX(3px); }
+  .fitem .idx { font-family: "JetBrains Mono", monospace; color: var(--lime); font-size: 12px; padding-top: 3px; flex: 0 0 auto; }
+  .fitem h4 { font-size: 0.98rem; font-weight: 600; letter-spacing: -0.01em; }
+  .fitem p { color: var(--muted); font-size: 0.88rem; margin-top: 4px; }
+
+  /* video cards */
+  .video {
+    display: flex; flex-direction: column; gap: 14px;
+    background: linear-gradient(180deg, var(--surface), var(--bg-2));
+    border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px;
+    transition: all 0.26s var(--ease);
+  }
+  .video:hover { transform: translateY(-4px); border-color: var(--line-strong); }
+  .video .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .play {
+    width: 34px; height: 34px; border-radius: 9px; flex: 0 0 auto;
+    display: grid; place-items: center; background: var(--lime-dim);
+    border: 1px solid rgba(200, 241, 105, 0.3); color: var(--lime);
+  }
+  .video .len { font-family: "JetBrains Mono", monospace; font-size: 11.5px; color: var(--faint); }
+  .video h4 { font-size: 0.95rem; font-weight: 600; line-height: 1.35; letter-spacing: -0.01em; }
+  .video .ch { color: var(--muted); font-size: 0.84rem; margin-top: 8px; }
+  .video .ch b { color: var(--teal); font-weight: 600; }
+
+  /* callout */
+  .callout {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 22px;
+    justify-content: space-between;
+    padding: 38px 40px; border-radius: 22px;
+    background: linear-gradient(135deg, rgba(200, 241, 105, 0.1), rgba(92, 227, 198, 0.06));
+    border: 1px solid rgba(200, 241, 105, 0.22);
+  }
+  .callout h3 { font-size: clamp(1.3rem, 3vw, 1.8rem); letter-spacing: -0.025em; }
+  .callout p { color: var(--muted); margin-top: 8px; max-width: 52ch; }
+
+  /* footer */
+  footer { border-top: 1px solid var(--line); padding: 44px 0 60px; margin-top: 20px; }
+  .foot-inner { display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: space-between; }
+  .foot-inner p { color: var(--faint); font-size: 13px; }
+  .foot-links { display: flex; flex-wrap: wrap; gap: 20px; }
+  .foot-links a { color: var(--muted); font-size: 13px; transition: color 0.2s var(--ease); }
+  .foot-links a:hover { color: var(--lime); }
+
+  /* reveal */
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    .grid-3 { grid-template-columns: 1fr 1fr; }
+    .stats { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    nav.links { display: none; }
+    nav.links.open {
+      display: flex; flex-direction: column; position: absolute; top: 68px; left: 0; right: 0;
+      background: var(--bg-2); border-bottom: 1px solid var(--line); padding: 12px; gap: 2px;
+    }
+    .nav-cta { display: none; }
+    .menu-toggle { display: grid; place-items: center; }
+    .grid-3, .grid-2 { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: 1fr 1fr; }
+    .row { flex-wrap: wrap; gap: 6px; }
+    .row .desc { flex-basis: 100%; }
+    section { padding: 58px 0; }
+    .hero { padding: 56px 0 30px; }
+    .callout { padding: 28px 24px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+<noscript><style>.reveal{opacity:1 !important;transform:none !important}</style></noscript>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- NAV -->
+  <header class="nav" id="top">
+    <div class="container nav-inner">
+      <a class="brand" href="#top">
+        <span class="mark">F</span>
+        Freebuff <span class="sub">/ index</span>
+      </a>
+      <nav class="links" id="navLinks">
+        <a href="#products">Products</a>
+        <a href="#docs">Docs</a>
+        <a href="#repos">Repos</a>
+        <a href="#guides">Guides</a>
+        <a href="#builds">Builds</a>
+        <a href="#community">Community</a>
+      </nav>
+      <a class="btn btn-primary nav-cta" href="https://freebuff.com" target="_blank" rel="noopener">Start free →</a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero container">
+    <span class="eyebrow"><span class="dot"></span> Free forever · funded by text ads</span>
+    <h1>The free coding agent,<br /><span class="accent">fully catalogued.</span></h1>
+    <p class="lede">
+      Every official doc, repo, guide, comparison and full build for Freebuff — a CLI, desktop app,
+      web builder, cloud sandbox and chat, all built on the open Codebuff framework.
+      No subscription, no API key, no lock-in.
+    </p>
+
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="https://freebuff.com/get-started" target="_blank" rel="noopener">Get started free</a>
+      <a class="btn btn-ghost" href="https://github.com/CodebuffAI/freebuff" target="_blank" rel="noopener">★ View on GitHub</a>
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-bar"><i></i><i></i><i></i><span>freebuff — zsh</span></div>
+      <div class="terminal-body">
+        <code><span class="prompt">$</span> npm install -g freebuff</code>
+        <button class="copy-btn" id="copyBtn" data-cmd="npm install -g freebuff">Copy</button>
+      </div>
+    </div>
+
+    <div class="stats reveal">
+      <div class="stat"><div class="num lime">$0</div><div class="lbl">per year, forever</div></div>
+      <div class="stat"><div class="num">463,881</div><div class="lbl">developers building now</div></div>
+      <div class="stat"><div class="num">5</div><div class="lbl">free products</div></div>
+      <div class="stat"><div class="num">12.5k</div><div class="lbl">GitHub stars · Apache-2.0</div></div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section id="products" class="container">
+    <div class="sec-head reveal">
+      <div class="kicker">01 — The five products</div>
+      <h2>One free agent, five places to build.</h2>
+      <p>Start in whichever surface fits — they share the same model catalog and the same agent.</p>
+    </div>
+    <div class="grid grid-3">
+      <a class="card reveal" href="https://freebuff.com/cli" target="_blank" rel="noopener">
+        <div class="icon">⌨</div>
+        <h3>Freebuff CLI</h3>
+        <p>Coding agent right in your terminal. Finds the files, makes the changes, runs the checks.</p>
+        <div class="meta">npm install -g freebuff <span class="go">→</span></div>
+      </a>
+      <a class="card reveal" href="https://freebuff.com/desktop" target="_blank" rel="noopener">
+        <div class="icon">▤</div>
+        <h3>Freebuff Desktop</h3>
+        <p>Run parallel agents locally — each in its own isolated workspace. macOS, Windows &amp; Linux.</p>
+        <div class="meta">Download for all platforms <span class="go">→</span></div>
+      </a>
+      <a class="card reveal" href="https://freebuff.com/web" target="_blank" rel="noopener">
+        <div class="icon">◆</div>
+        <h3>Freebuff Web</h3>
+        <p>Describe an idea and get a built, previewed and deployed full-stack app — React + Convex.</p>
+        <div class="meta">Prompt → live URL <span class="go">→</span></div>
+      </a>
+      <a class="card reveal" href="https://freebuff.com/cloud" target="_blank" rel="noopener">
+        <div class="icon">☁</div>
+        <h3>Freebuff Cloud</h3>
+        <p>A real cloud sandbox and live preview for any GitHub repo — public or private, new or old.</p>
+        <div class="meta">Connect any repository <span class="go">→</span></div>
+      </a>
+      <a class="card reveal" href="https://freebuff.com" target="_blank" rel="noopener">
+        <div class="icon">✦</div>
+        <h3>Freebuff Chat</h3>
+        <p>Free AI chat that researches and thinks deeply to answer your questions.</p>
+        <div class="meta">Start a chat <span class="go">→</span></div>
+      </a>
+      <a class="card reveal" href="https://github.com/CodebuffAI/codebuff-community" target="_blank" rel="noopener">
+        <div class="icon">★</div>
+        <h3>Codebuff framework</h3>
+        <p>The open multi-agent framework underneath — build custom agents or embed it via the SDK.</p>
+        <div class="meta">@codebuff/sdk <span class="go">→</span></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- DOCS -->
+  <section id="docs" class="container">
+    <div class="sec-head reveal">
+      <div class="kicker">02 — Official documentation</div>
+      <h2>Read the source of truth.</h2>
+      <p>Quick starts, architecture, the model catalog, contribution guides and the developer SDK.</p>
+    </div>
+    <div class="rows reveal">
+      <a class="row" href="https://github.com/CodebuffAI/freebuff" target="_blank" rel="noopener">
+        <span class="name">Freebuff README <span class="tag">core</span></span>
+        <span class="desc">Quick start, full model catalog, how the agents work, free-access tiers, data-use policy.</span>
+        <span class="browse">github ↗</span>
+      </a>
+      <a class="row" href="https://www.codebuff.com/docs/help/quick-start" target="_blank" rel="noopener">
+        <span class="name">Codebuff docs <span class="tag">quick start</span></span>
+        <span class="desc">Install, modes (Free / Max / Plan), <code>/init</code>, custom agents and troubleshooting.</span>
+        <span class="browse">codebuff.com ↗</span>
+      </a>
+      <a class="row" href="https://github.com/CodebuffAI/freebuff" target="_blank" rel="noopener">
+        <span class="name">Contributing guide <span class="tag">dev</span></span>
+        <span class="desc">Local monorepo setup — Docker + <code>.env.local</code>, <code>bun install</code>, <code>bun up</code>, <code>bun start-cli</code>.</span>
+        <span class="browse">github ↗</span>
+      </a>
+      <a class="row" href="https://github.com/CodebuffAI/freebuff" target="_blank" rel="noopener">
+        <span class="name">Development &amp; testing guides <span class="tag">dev</span></span>
+        <span class="desc">Environment setup, the day-to-day workflow, and the checks to run before a PR.</span>
+        <span class="browse">github ↗</span>
+      </a>
+      <a class="row" href="https://freebuff.com/privacy-policy" target="_blank" rel="noopener">
+        <span class="name">Privacy &amp; terms <span class="tag">legal</span></span>
+        <span class="desc">Data retention, eligibility, advertising choices and the terms of service.</span>
+        <span class="browse">freebuff.com ↗</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- REPOS -->
+  <section id="repos" class="container">
+    <div class="sec-head reveal">
+      <div class="kicker">03 — Official repositories</div>
+      <h2>The <code>CodebuffAI</code> org.</h2>
+      <p>Six public repositories — the agent itself, community templates, tooling and benchmarks.</p>
+    </div>
+    <div class="rows reveal">
+      <a class="row" href="https://github.com/CodebuffAI/freebuff" target="_blank" rel="noopener">
+        <span class="name">freebuff <span class="tag">Apache-2.0</span></span>
+        <span class="desc">The free coding agent — a TypeScript / Bun monorepo.</span>
+        <span class="browse">12.5k ★</span>
+      </a>
+      <a class="row" href="https://github.com/CodebuffAI/codebuff-community" target="_blank" rel="noopener">
+        <span class="name">codebuff-community <span class="tag">MIT</span></span>
+        <span class="desc">Starter templates (<code>/starter-templates</code>) and a community showcase (<code>/showcase</code>).</span>
+        <span class="browse">53 ★</span>
+      </a>
+      <a class="row" href="https://github.com/CodebuffAI/evalbuff" target="_blank" rel="noopener">
+        <span class="name">evalbuff</span>
+        <span class="desc">Evaluation harness for the agents.</span>
+        <span class="browse">github ↗</span>
+      </a>
+      <a class="row" href="https://github.com/CodebuffAI/opentui" target="_blank" rel="noopener">
+        <span class="name">opentui <span class="tag">MIT</span></span>
+        <span class="desc">A library for building terminal user interfaces (fork of anomalyco/opentui).</span>
+        <span class="browse">github ↗</span>
+      </a>
+      <a class="row" href="https://github.com/CodebuffAI/stagehand" target="_blank" rel="noopener">
+        <span class="name">stagehand <span class="tag">MIT</span></span>
+        <span class="desc">An AI web-browsing framework, customized for Codebuff.</span>
+        <span class="browse">github ↗</span>
+      </a>
+      <a class="row" href="https://github.com/CodebuffAI/codebuff-swe-bench" target="_blank" rel="noopener">
+        <span class="name">codebuff-swe-bench <span class="tag">Apache-2.0</span></span>
+        <span class="desc">Harness used to benchmark Codebuff on SWE-bench.</span>
+        <span class="browse">github ↗</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- GUIDES -->
+  <section id="guides" class="container">
+    <div class="sec-head reveal">
+      <div class="kicker">04 — Guides &amp; comparisons</div>
+      <h2>Learn it, then decide.</h2>
+      <p>Hands-on guides and honest head-to-heads against every paid agent.</p>
+    </div>
+    <div class="grid grid-2" style="align-items:start">
+      <div class="flist reveal">
+        <a class="fitem" href="https://freebuff.com/blog/cancel-your-cloud-coding-agent-subscription" target="_blank" rel="noopener">
+          <span class="idx">01</span>
+          <span><h4>Cancel your cloud coding agent subscription. Keep the project.</h4>
+          <p>Every app builder syncs to GitHub — that's the door out of the $600–$2,400/yr plan.</p></span>
+        </a>
+        <a class="fitem" href="https://freebuff.com/blog/state-of-free-ai-coding-2026" target="_blank" rel="noopener">
+          <span class="idx">02</span>
+          <span><h4>The state of free AI coding in 2026</h4>
+          <p>Frontier models got cheap. Coding agents got free. What that changes.</p></span>
+        </a>
+        <a class="fitem" href="https://freebuff.com/blog/freebuff-subagents-deep-dive" target="_blank" rel="noopener">
+          <span class="idx">03</span>
+          <span><h4>Freebuff subagents, deep dive</h4>
+          <p>How specialized agents divide context, planning, editing and review.</p></span>
+        </a>
+        <a class="fitem" href="https://freebuff.com/blog/freebuff-web-vs-lovable-bolt-replit" target="_blank" rel="noopener">
+          <span class="idx">04</span>
+          <span><h4>Freebuff Web vs Lovable, Bolt &amp; Replit</h4>
+          <p>Same prompt-to-app loop, compared side by side.</p></span>
+        </a>
+      </div>
+      <div class="reveal">
+        <div class="kicker" style="margin-bottom:16px">Head-to-head</div>
+        <div class="pills">
+          <a class="pill" href="https://freebuff.com/blog/free-claude-code-cli-coding-agent-alternative-freebuff" target="_blank" rel="noopener"><span class="d"></span>Claude Code</a>
+          <a class="pill" href="https://freebuff.com/blog/free-alternative-to-cursor-cloud" target="_blank" rel="noopener"><span class="d"></span>Cursor Cloud</a>
+          <a class="pill" href="https://freebuff.com/blog/free-alternative-to-devin" target="_blank" rel="noopener"><span class="d"></span>Devin</a>
+          <a class="pill" href="https://freebuff.com/blog/free-cloud-alternative-to-replit" target="_blank" rel="noopener"><span class="d"></span>Replit</a>
+          <a class="pill" href="https://freebuff.com/blog/free-cloud-alternative-to-lovable" target="_blank" rel="noopener"><span class="d"></span>Lovable</a>
+          <a class="pill" href="https://freebuff.com/blog/free-alternative-to-factory" target="_blank" rel="noopener"><span class="d"></span>Factory</a>
+          <a class="pill" href="https://freebuff.com/blog/free-alternative-to-windsurf" target="_blank" rel="noopener"><span class="d"></span>Windsurf</a>
+          <a class="pill" href="https://freebuff.com/blog/free-v0-vercel-ai-app-builder-alternative-freebuff" target="_blank" rel="noopener"><span class="d"></span>v0</a>
+          <a class="pill" href="https://freebuff.com/blog/free-github-copilot-cli-coding-agent-alternative-freebuff" target="_blank" rel="noopener"><span class="d"></span>Copilot CLI</a>
+          <a class="pill" href="https://freebuff.com/blog/free-alternative-to-gemini-cli" target="_blank" rel="noopener"><span class="d"></span>Gemini CLI</a>
+          <a class="pill" href="https://freebuff.com/blog/free-opencode-cli-coding-agent-alternative-freebuff" target="_blank" rel="noopener"><span class="d"></span>OpenCode</a>
+          <a class="pill" href="https://freebuff.com/blog" target="_blank" rel="noopener"><span class="d"></span>All 78 posts →</a>
+        </div>
+        <p style="color:var(--muted);font-size:0.92rem;margin-top:24px">
+          Also covered: Bolt.new, Base44, Emergent, Anything, Aura, Canva Code, Cosmic.new,
+          Figma Make, Floot, Google AI Studio, Macaly, Magic Patterns, Mocha, Orchids, Same.new.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUILDS -->
+  <section id="builds" class="container">
+    <div class="sec-head reveal">
+      <div class="kicker">05 — Full builds &amp; tutorials</div>
+      <h2>Watch it build, end to end.</h2>
+      <p>Third-party walkthroughs, hands-on tests and reviews — plus live community apps.</p>
+    </div>
+    <div class="grid grid-auto">
+      <a class="video reveal" href="https://www.youtube.com/watch?v=6rbd1uK_pEk" target="_blank" rel="noopener">
+        <div class="top"><span class="play">▶</span><span class="len">10:00</span></div>
+        <h4>Freebuff: Full Test — CLI, Desktop App, Web Builder &amp; Cloud</h4>
+        <div class="ch">Stackagen</div>
+      </a>
+      <a class="video reveal" href="https://www.youtube.com/watch?v=ATF_7ABZMKU" target="_blank" rel="noopener">
+        <div class="top"><span class="play">▶</span><span class="len">18:06</span></div>
+        <h4>STOP Paying for Claude Code — Use This FREE Coding Agent Instead</h4>
+        <div class="ch">Damian Malliaros</div>
+      </a>
+      <a class="video reveal" href="https://www.youtube.com/watch?v=1ZNq97WAfmQ" target="_blank" rel="noopener">
+        <div class="top"><span class="play">▶</span><span class="len">14:27</span></div>
+        <h4>Freebuff Changes How Developers Use AI Without Paying</h4>
+        <div class="ch">WEBdoze</div>
+      </a>
+      <a class="video reveal" href="https://www.youtube.com/watch?v=IJS08TVGut0" target="_blank" rel="noopener">
+        <div class="top"><span class="play">▶</span><span class="len">9:41</span></div>
+        <h4>I Found a Way To Use AI Agents Like Codex Completely For FREE</h4>
+        <div class="ch">Nick Saraev</div>
+      </a>
+      <a class="video reveal" href="https://www.youtube.com/watch?v=MmKDv3h4H5g" target="_blank" rel="noopener">
+        <div class="top"><span class="play">▶</span><span class="len">12:12</span></div>
+        <h4>I Replaced Claude Code with Freebuff (Unlimited &amp; 100% FREE)</h4>
+        <div class="ch">WTF Code</div>
+      </a>
+      <a class="video reveal" href="https://www.youtube.com/watch?v=oSp8_1kaF-M" target="_blank" rel="noopener">
+        <div class="top"><span class="play">▶</span><span class="len">12:30</span></div>
+        <h4>They Made a Free Cursor? I Tried Freebuff — No Subscription Needed!</h4>
+        <div class="ch">Where Do I Click</div>
+      </a>
+      <a class="video reveal" href="https://www.youtube.com/watch?v=X9M8VlHYl8Y" target="_blank" rel="noopener">
+        <div class="top"><span class="play">▶</span><span class="len">7:55</span></div>
+        <h4>Freebuff: This FREE AI Coding Agent is INSANE!</h4>
+        <div class="ch">Julian Goldie SEO</div>
+      </a>
+      <a class="video reveal" href="https://www.youtube.com/watch?v=A7p20mU3uDc" target="_blank" rel="noopener">
+        <div class="top"><span class="play">▶</span><span class="len">7:16</span></div>
+        <h4>Freebuff Coder: This FULLY FREE AI Coder is ACTUALLY CRAZY!</h4>
+        <div class="ch">AICodeKing</div>
+      </a>
+      <a class="video reveal" href="https://www.youtube.com/watch?v=CF_ijTZsehE" target="_blank" rel="noopener">
+        <div class="top"><span class="play">▶</span><span class="len">6:07</span></div>
+        <h4>Freebuff Tutorial — Open source free AI coding agent that actually works</h4>
+        <div class="ch">Tech Business Club</div>
+      </a>
+      <a class="video reveal" href="https://www.youtube.com/watch?v=QcnDaHoutVQ" target="_blank" rel="noopener">
+        <div class="top"><span class="play">▶</span><span class="len">11:57</span></div>
+        <h4>FREEBUFF vs Claude Code — The Free Alternative Nobody Talks About</h4>
+        <div class="ch">Yar Malik</div>
+      </a>
+      <a class="video reveal" href="https://www.youtube.com/watch?v=Lqq1icsAH6o" target="_blank" rel="noopener">
+        <div class="top"><span class="play">▶</span><span class="len">6:11</span></div>
+        <h4>Freebuff review — Free AI Coding Tool and NEW Open Claude Code</h4>
+        <div class="ch">MaxonShire</div>
+      </a>
+      <a class="video reveal" href="https://www.youtube.com/watch?v=LUjYzQPcSG8" target="_blank" rel="noopener">
+        <div class="top"><span class="play">▶</span><span class="len">5:04</span></div>
+        <h4>Freebuff AI: Build a Complete Website With One Prompt</h4>
+        <div class="ch">MrFreeAI</div>
+      </a>
+    </div>
+    <div class="hero-actions reveal" style="margin-top:30px">
+      <a class="btn btn-ghost" href="https://freebuff.com/web/community/explore" target="_blank" rel="noopener">Browse live community apps →</a>
+      <a class="btn btn-ghost" href="https://www.youtube.com/watch?v=dQ0NOMsu0dA" target="_blank" rel="noopener">Codebuff Launch HN demo →</a>
+    </div>
+  </section>
+
+  <!-- COMMUNITY -->
+  <section id="community" class="container">
+    <div class="sec-head reveal">
+      <div class="kicker">06 — Community contributed</div>
+      <h2>Written guides &amp; discussion.</h2>
+      <p>Practitioner write-ups, codebase deep dives, community tooling and the threads where it started.</p>
+    </div>
+    <div class="rows reveal">
+      <a class="row" href="https://dev.to/chicagoist/how-i-spent-30-rounds-debugging-a-syntax-error-that-wasnt-4eea" target="_blank" rel="noopener">
+        <span class="name">30 rounds debugging a "syntax error" <span class="tag">dev.to</span></span>
+        <span class="desc">A practitioner write-up of driving Freebuff through a real debugging loop.</span>
+        <span class="browse">read ↗</span>
+      </a>
+      <a class="row" href="https://dev.to/t/codebuff" target="_blank" rel="noopener">
+        <span class="name">Codebuff codebase deep dives <span class="tag">dev.to</span></span>
+        <span class="desc">Close readings of <code>codeSearch</code>, <code>runTerminalCommand</code>, PostHog config and rage detectors.</span>
+        <span class="browse">series ↗</span>
+      </a>
+      <a class="row" href="https://github.com/Quorinex/Freebuff2API" target="_blank" rel="noopener">
+        <span class="name">Freebuff2API <span class="tag">714 ★</span></span>
+        <span class="desc">An OpenAI-compatible proxy with a full setup guide — token capture, config, Docker deploy.</span>
+        <span class="browse">github ↗</span>
+      </a>
+      <a class="row" href="https://news.ycombinator.com/item?id=42078536" target="_blank" rel="noopener">
+        <span class="name">Launch HN: Codebuff (YC F24) <span class="tag">HN</span></span>
+        <span class="desc">The origin story and architecture walkthrough — 239 comments.</span>
+        <span class="browse">discuss ↗</span>
+      </a>
+      <a class="row" href="https://news.ycombinator.com/item?id=48578487" target="_blank" rel="noopener">
+        <span class="name">Show HN: A free CLI coding agent <span class="tag">HN</span></span>
+        <span class="desc">The ad-funded model, with candid critique on ads and data use.</span>
+        <span class="browse">discuss ↗</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="container" style="padding-bottom:20px">
+    <div class="callout reveal">
+      <div>
+        <h3>It's $0. Forever.</h3>
+        <p>No subscription, no API key, no credit card. Install the CLI or open the web builder and describe what you want.</p>
+      </div>
+      <div class="hero-actions" style="margin-top:0">
+        <a class="btn btn-primary" href="https://freebuff.com/get-started" target="_blank" rel="noopener">Get Freebuff →</a>
+        <a class="btn btn-ghost" href="https://github.com/CodebuffAI/freebuff" target="_blank" rel="noopener">Read the docs</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container foot-inner">
+      <p>Freebuff Index — an unofficial, community catalogued landing page. Not affiliated with Freebuff.</p>
+      <div class="foot-links">
+        <a href="https://freebuff.com" target="_blank" rel="noopener">freebuff.com</a>
+        <a href="https://github.com/CodebuffAI/freebuff" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.codebuff.com/docs/help/quick-start" target="_blank" rel="noopener">Codebuff docs</a>
+        <a href="#top">Back to top ↑</a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  // sticky nav
+  var nav = document.querySelector("header.nav");
+  var onScroll = function () { nav.classList.toggle("scrolled", window.scrollY > 8); };
+  onScroll(); window.addEventListener("scroll", onScroll, { passive: true });
+
+  // mobile menu
+  var toggle = document.getElementById("menuToggle");
+  var links = document.getElementById("navLinks");
+  toggle.addEventListener("click", function () {
+    var open = links.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+  links.addEventListener("click", function (e) {
+    if (e.target.tagName === "A") { links.classList.remove("open"); toggle.setAttribute("aria-expanded", "false"); }
+  });
+
+  // copy install command
+  var copyBtn = document.getElementById("copyBtn");
+  copyBtn.addEventListener("click", function () {
+    var cmd = copyBtn.getAttribute("data-cmd");
+    var done = function () {
+      copyBtn.textContent = "Copied ✓"; copyBtn.classList.add("done");
+      setTimeout(function () { copyBtn.textContent = "Copy"; copyBtn.classList.remove("done"); }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(cmd).then(done).catch(done);
+    } else {
+      var ta = document.createElement("textarea");
+      ta.value = cmd; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta); done();
+    }
+  });
+
+  // scroll reveal
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+    document.querySelectorAll(".reveal").forEach(function (el, i) {
+      el.style.transitionDelay = Math.min(i % 6, 5) * 45 + "ms";
+      io.observe(el);
+    });
+  } else {
+    document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
+  }
+
+  // cursor glow on cards
+  document.querySelectorAll(".card").forEach(function (card) {
+    card.addEventListener("mousemove", function (e) {
+      var r = card.getBoundingClientRect();
+      card.style.setProperty("--mx", (e.clientX - r.left) + "px");
+      card.style.setProperty("--my", (e.clientY - r.top) + "px");
+    });
+  });
+</script>
+</body>
+</html>
